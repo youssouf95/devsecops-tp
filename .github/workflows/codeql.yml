@@ -33,8 +33,8 @@ jobs:
           # queries: security-extended,security-and-quality  # (optionnel: règles supplémentaires)
 
       # Essaie de builder automatiquement quand c'est utile (Java/JS/Go/…)
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v3
+      - name: Build (Maven)
+        run: mvn -B -DskipTests package
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
