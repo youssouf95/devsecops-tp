@@ -1,0 +1,42 @@
+name: CodeQL
+
+on:
+  push:
+    branches: [ "main" ]   # 👉 s'exécute à chaque push sur main
+  pull_request:
+    branches: [ "main" ]   # 👉 s'exécute sur chaque PR vers main
+  schedule:
+    - cron: "0 3 * * 1"    # 👉 scan hebdo (lundi 03:00 UTC)
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write  # ⚠️ indispensable pour publier les alertes
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'python' ]  # 👈 adapte la/les valeur(s) à ton repo
+        # ex multi-langages: [ 'python', 'javascript' ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          # queries: security-extended,security-and-quality  # (optionnel: règles supplémentaires)
+
+      # Essaie de builder automatiquement quand c'est utile (Java/JS/Go/…)
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
